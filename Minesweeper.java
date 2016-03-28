@@ -6,7 +6,6 @@
  *
  */
 
-package minesweeper;
 
 import java.util.Scanner;
 

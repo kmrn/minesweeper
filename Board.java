@@ -1,4 +1,3 @@
-package minesweeper;
 
 import java.util.Random;
 import java.util.Scanner;
@@ -34,12 +33,11 @@ public class Board {
 	public static void updateBoard(int x, int y) {
 		x--;
 		y--;
-		
-		if (x > 0 && x < width && y > 0 && y < height)
+                
+		if (x >= 0 && x < width && y >= 0 && y < height)
 			board[y][x].click();
-		
-		
-		
+                
+                
 		System.out.print("\n   ");
 		for (int i = 1; i <= width; i++)
 			System.out.print(" " + i + " ");
