@@ -1,27 +1,14 @@
 package minesweeper;
 
-public class Bomb {
-	
-	public int borderNum;
-	public boolean open;
-	public boolean bomb;
-	public char symbol;
-	
-	private int x;
-	private int y;
-	private char bombType;
+public class Bomb extends Tile {
 	
 	public Bomb() {
-		bomb = false;
-		open = false;
-		symbol = '?';
+		super();
 	}
 	
 	public void click() {
-		if (bomb)
-			symbol = '*';
-		else
-			symbol = ' ';
+		open = true;
+		symbol = '*';
 		
 	}
 }

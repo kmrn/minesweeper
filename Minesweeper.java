@@ -13,12 +13,12 @@ import java.util.Scanner;
 public abstract class Minesweeper {
 
 	public static void main(String[] args) {
-//		Scanner scan = new Scanner(System.in);
-//		System.out.println("Select game type (beginner, intermediate, advanced, custom); ");
-//		String select = scan.nextLine();
-//		
-//		System.out.println();
-		String select = "beginner";
+		Scanner scan = new Scanner(System.in);
+		System.out.println("Select game type (beginner, intermediate, advanced, custom); ");
+		String select = scan.nextLine();
+		
+		System.out.println();
+		System.out.println("When prompted enter the x and y coordinates followed by an 'f' for flag or an 'n', all seperated by spaces. Good luck!");
 		
 		switch (select) {
 		case "Beginner":
@@ -39,7 +39,7 @@ public abstract class Minesweeper {
 		case "Custom":
 		case "custom":
 			System.out.println("Please enter the board height, width, and number of mines separated by spaces: ");
-			//new Board(scan.nextInt(), scan.nextInt(), scan.nextInt());
+			new Board(scan.nextInt(), scan.nextInt(), scan.nextInt());
 			break;
 			
 		default:

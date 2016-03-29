@@ -5,38 +5,76 @@ import java.util.Scanner;
 
 public class Board {
 	
-	private static Bomb[][] board;
+	private static Tile[][] board;
 	private static int height;
 	private static int width;
+	private static int gameState;
+	private static int numMines;
 	
 	public Board(int boardHeight, int boardWidth, int mines) {
 		
 		height = boardHeight;
 		width = boardWidth;
+		numMines = mines;
+		gameState = 1;
 		
-		board = new Bomb[height][width];
+		board = new Tile[height][width];
 		
-		for (int i = 0; i < height; i++)
-			for (int j = 0; j < width; j++)
-				board[i][j] = new Bomb();
+		for (int i = 0; i < height; i++) {
+			for (int j = 0; j < width; j++) {
+				board[i][j] = new Empty();
+				board[i][j].x = j;
+				board[i][j].y = i;
+			}
+		}
 		
 		while (mines > 0) {
 			Random randX = new Random();
 			Random randY = new Random();
 			int x = randX.nextInt(width);
 			int y = randY.nextInt(height);
-			board[y][x].bomb = true;
-			mines--;
+			
+			if (!(board[y][x] instanceof Bomb)) {
+				board[y][x] = new Bomb();
+				mines--;
+			}
 		}
-		updateBoard(0, 0);
+		updateBoard(0, 0, '0');
 	}
 	
-	public static void updateBoard(int x, int y) {
+	public static void updateBoard(int x, int y, char flag) {
 		x--;
 		y--;
 		
-		if (x > 0 && x < width && y > 0 && y < height)
-			board[y][x].click();
+		if (x >= 0 && x < width && y >= 0 && y < height) {
+			if (flag == 'f' || flag == 'F') {
+				if (board[y][x].symbol == 'F') {
+					board[y][x].flag();
+				} else if (board[y][x].symbol != '█') {
+					System.out.println("You can only flag uncovered tiles!");		
+				} else {
+					board[y][x].flag();
+				}
+			} else {
+				if (board[y][x].symbol == 'F') {
+					System.out.println("Unflag a square before clicking it! (flag it again to unflag it)");
+				} else {
+					board[y][x].click();
+					if (board[y][x] instanceof Bomb)
+						gameState = 0;
+				}
+			}
+		}
+		
+		
+		if (gameState == 1)
+			checkWin();
+		
+		if (gameState == 0) {
+			showAllBombs();
+			System.out.println("\nGAME OVER \n YOU LOOOOOOOOSE");
+			System.exit(0);
+		}
 		
 		
 		
@@ -54,13 +92,53 @@ public class Board {
 			System.out.print("\n");
 		}
 		
-		getInput();
+		if (gameState == 1)
+			getInput();
+		
+		
+		if (gameState == 2) {
+			System.out.println("\nGAME OVER \n YOU WIN \n  YOU ARE A COOL GUY");
+			System.exit(0);
+		}
 	}
 	
 	public static void getInput() {
 		Scanner scan = new Scanner(System.in);
-		System.out.print("\nEnter x and y coordinates separated by a space: ");
-		updateBoard(scan.nextInt(), scan.nextInt());
+		System.out.print("\nInput > ");
+		updateBoard(scan.nextInt(), scan.nextInt(), scan.next().charAt(0));
 		scan.close();
+	}
+	
+	public static Tile[][] getBoard() { return board; }
+	public static int getHeight() { return height; }
+	public static int getWidth() { return width; }
+	
+	public static void showAllBombs() {
+		for (int i = 0; i < width; i++) {
+			for (int j = 0; j < height; j++) {
+				if (board[j][i] instanceof Bomb) {
+					if (gameState == 0)
+						board[j][i].click();
+					if (gameState == 2)
+						board[j][i].symbol = 'F';
+				}
+			}
+		}
+	}
+	
+	public static void checkWin() {
+		int emptyTiles = 0;
+		for (int i = 0; i < width; i++) {
+			for (int j = 0; j < height; j++) {
+				if (board[j][i] instanceof Empty && board[j][i].open) {
+					emptyTiles++;
+				}
+			}
+		}
+		
+		if (emptyTiles == ((height*width) - numMines)) {
+			gameState = 2;
+			showAllBombs();
+		}
 	}
 }
