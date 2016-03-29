@@ -1,5 +1,6 @@
 package minesweeper;
 
+import java.util.InputMismatchException;
 import java.util.Random;
 import java.util.Scanner;
 
@@ -73,19 +74,22 @@ public class Board {
 		if (gameState == 0) {
 			showAllBombs();
 			System.out.println("\nGAME OVER \n YOU LOOOOOOOOSE");
-			System.exit(0);
 		}
 		
 		
 		
-		System.out.print("\n   ");
-		for (int i = 1; i <= width; i++)
-			System.out.print(" " + i + " ");
+		System.out.print("\n\t");
+		for (int i = 1; i <= width; i++) {
+			if (i < 10)
+				System.out.print(" " + i + " ");
+			else
+				System.out.print(i + " ");
+		}
 		
 		System.out.print("\n");
 		
 		for (int i = 1; i <= height; i++) {
-			System.out.print(" " + i + " ");
+			System.out.print(" " + i + "\t");
 			for (int j = 1; j <= width; j++) {
 				System.out.print("[" + board[i-1][j-1].symbol + "]");
 			}
@@ -95,18 +99,23 @@ public class Board {
 		if (gameState == 1)
 			getInput();
 		
-		
-		if (gameState == 2) {
+		if (gameState == 2)
 			System.out.println("\nGAME OVER \n YOU WIN \n  YOU ARE A COOL GUY");
+		
+		if (gameState == 0 || gameState == 2)
 			System.exit(0);
-		}
 	}
 	
 	public static void getInput() {
 		Scanner scan = new Scanner(System.in);
-		System.out.print("\nInput > ");
-		updateBoard(scan.nextInt(), scan.nextInt(), scan.next().charAt(0));
-		scan.close();
+		try{
+			System.out.print("\nInput > ");
+			updateBoard(scan.nextInt(), scan.nextInt(), scan.next().charAt(0));
+			scan.close();
+		} catch (InputMismatchException e){
+			System.out.println("Invalid Input");
+			getInput();
+		}
 	}
 	
 	public static Tile[][] getBoard() { return board; }

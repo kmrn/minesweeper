@@ -8,6 +8,7 @@
 
 package minesweeper;
 
+import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public abstract class Minesweeper {
@@ -15,10 +16,8 @@ public abstract class Minesweeper {
 	public static void main(String[] args) {
 		Scanner scan = new Scanner(System.in);
 		System.out.println("Select game type (beginner, intermediate, advanced, custom); ");
-		String select = scan.nextLine();
 		
-		System.out.println();
-		System.out.println("When prompted enter the x and y coordinates followed by an 'f' for flag or an 'n', all seperated by spaces. Good luck!");
+		String select = scan.nextLine();
 		
 		switch (select) {
 		case "Beginner":
@@ -36,17 +35,19 @@ public abstract class Minesweeper {
 			new Board(16, 30, 99);
 			break;
 			
-		case "Custom":
-		case "custom":
-			System.out.println("Please enter the board height, width, and number of mines separated by spaces: ");
-			new Board(scan.nextInt(), scan.nextInt(), scan.nextInt());
-			break;
-			
 		default:
-			System.out.println("ERROR: Invalid input");
+
+			try {
+				System.out.println("Please enter the board height, width, and number of mines separated by spaces: ");
+				new Board(scan.nextInt(), scan.nextInt(), scan.nextInt());
+				
+			} catch (InputMismatchException e) {
+				System.out.println("Invalid Input");
+			}
 			break;
 		}
 		
-		//scan.close();
+		System.out.println("\n\nWhen prompted enter the x and y coordinates followed by an 'f' for flag or an 'n', all seperated by spaces. Good luck!\n");
+		scan.close();
 	}
 }
