@@ -1,26 +1,16 @@
+package minesweeper;
 
-public class Bomb {
+public class Bomb extends Tile {
 	
-	public int borderNum;
-	public boolean open;
-	public boolean bomb;
-	public char symbol;
-	
-	private int x;
-	private int y;
-	private char bombType;
-	
+        // Constructor that just calls parents constructor
 	public Bomb() {
-		bomb = false;
-		open = false;
-		symbol = '?';
+		super();
 	}
 	
+        // Click method that overrides parents method
 	public void click() {
-		if (bomb)
-			symbol = '*';
-		else
-			symbol = ' ';
+		open = true;
+		symbol = 'X';
 		
 	}
 }
