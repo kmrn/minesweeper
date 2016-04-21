@@ -1,21 +1,30 @@
 package minesweeper;
 
+import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.InputMismatchException;
 import java.util.Random;
 import java.util.Scanner;
 
-public class Board {
+import javax.swing.JFrame;
+//import javax.swing.JButton;
+import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
+
+public class Board extends JPanel {
 	
-        // Declaration of private variables
+    // Declaration of private variables
 	private static Tile[][] board;
 	private static int height;
 	private static int width;
 	private static int gameState;
 	private static int numMines;
 	
-        // Board constructor that accepts the height, width, and amount of mines
-        // as parameters
+    // Board constructor that accepts the height, width, and amount of mines
+    // as parameters
 	public Board(int boardHeight, int boardWidth, int mines) {
+		setLayout(new GridLayout(boardHeight, boardWidth));
 		
 		height = boardHeight;
 		width = boardWidth;
@@ -24,16 +33,19 @@ public class Board {
 		
 		board = new Tile[height][width];
 		
-                // Instantiates board objects
+		ButtonHandler handler = new ButtonHandler();
+        // Instantiates board objects
 		for (int i = 0; i < height; i++) {
 			for (int j = 0; j < width; j++) {
 				board[i][j] = new Empty();
 				board[i][j].x = j;
 				board[i][j].y = i;
+				board[i][j].addActionListener(handler);
+				add(board[i][j]);
 			}
 		}
 		
-                // Places mines in random positions in the board array
+        // Places mines in random positions in the board array
 		while (mines > 0) {
 			Random randX = new Random();
 			Random randY = new Random();
@@ -45,16 +57,40 @@ public class Board {
 				mines--;
 			}
 		}
-		updateBoard(0, 0, '0');
+		
+		//updateBoard(0, 0, '0');
 	}
 	
-        // Method that updates the board and prints it out
+	private class ButtonHandler implements ActionListener {
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			// TODO Auto-generated method stub
+			if (e.getSource() instanceof Bomb) {
+				if (e.getSource() instanceof Nuclear) {
+				
+				} else if (e.getSource() instanceof Poison) {
+					
+				} else if (e.getSource() instanceof Rainbow) {
+				
+				} else if (e.getSource() instanceof Health) {
+					
+				}	
+			} else {
+				
+			}
+		}
+		
+	}
+	
+    // Method that updates the board and prints it out
 	public static void updateBoard(int x, int y, char flag) {
-                // User inputs number >= 1 and arrays first values are 0
+        
+		// User inputs number >= 1 and arrays first values are 0
 		x--;
 		y--;
 		
-                // Applies user input after the first time
+        // Applies user input after the first time
 		if (x >= 0 && x < width && y >= 0 && y < height) {
 			if (flag == 'f' || flag == 'F') {
 				if (board[y][x].symbol == 'F') {
@@ -79,7 +115,7 @@ public class Board {
 		if (gameState == 1)
 			checkWin();
 		
-                // Shows all the bombs if user clicked a bomb and they lose
+        // Shows all the bombs if user clicked a bomb and they lose
 		if (gameState == 0) {
 			showAllBombs();
 			System.out.println(
@@ -104,7 +140,7 @@ public class Board {
 		
 		System.out.print("\n");
 		
-                // Prints the vertical row of coordinates and prints the board
+        // Prints the vertical row of coordinates and prints the board
 		for (int i = 1; i <= height; i++) {
 			System.out.print(" " + i + "\t");
 			for (int j = 1; j <= width; j++) {
@@ -113,16 +149,16 @@ public class Board {
 			System.out.print("\n");
 		}
 		
-                // Calls method to get user input
+        // Calls method to get user input
 		if (gameState == 1)
 			getInput();
 		
-                // Exits the game if user has won or lost
+        // Exits the game if user has won or lost
 		if (gameState == 0 || gameState == 2)
 			System.exit(0);
 	}
 	
-        // Method that gets the users input
+    // Method that gets the users input
 	public static void getInput() {
 		Scanner scan = new Scanner(System.in);
 		try{
@@ -135,13 +171,13 @@ public class Board {
 		}
 	}
 	
-        // Accessor methods used by the Empty class
+    // Accessor methods used by the Empty class
 	public static Tile[][] getBoard() { return board; }
-	public static int getHeight() { return height; }
-	public static int getWidth() { return width; }
+	public static int getH() { return height; }
+	public static int getW() { return width; }
 	
-        // Method that either reveals all bombs or flags all bombs depending on
-        // whether the user won or lost
+	// Method that either reveals all bombs or flags all bombs depending on
+	// whether the user won or lost
 	public static void showAllBombs() {
 		for (int i = 0; i < width; i++) {
 			for (int j = 0; j < height; j++) {
@@ -155,8 +191,8 @@ public class Board {
 		}
 	}
 	
-        // Checks if user has won by checking if every tile other than a bomb
-        // has been uncovered
+	// Checks if user has won by checking if every tile other than a bomb
+    // has been uncovered
 	public static void checkWin() {
 		int emptyTiles = 0;
 		for (int i = 0; i < width; i++) {

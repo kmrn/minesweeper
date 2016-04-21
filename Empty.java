@@ -29,7 +29,7 @@ public class Empty extends Tile {
 						
 					} else {
 						
-						if (tempx >= 0 && tempy >= 0 && tempy < Board.getHeight() && tempx < Board.getWidth())
+						if (tempx >= 0 && tempy >= 0 && tempy < Board.getH() && tempx < Board.getW())
 							adjacent.add(board[tempy][tempx]);
 					} 
 				}
