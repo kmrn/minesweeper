@@ -3,18 +3,20 @@ package minesweeper;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Empty extends Tile {
+public class Empty extends Tile{
         
+        private static LoadClass loader = new LoadClass();
         // Constructor that just calls parents constructor
 	Empty() {
 		super();
 	}
             
         // Overrides parents click method
+        @Override
 	public void click() {
                 // Checks to see if the space has already been clicked and clears
                 // any spaces adjacent to it if a bomb is not adjacent recursively
-		if (!open) {
+		if (!open && !flagged) {
 			open = true;
 			Tile[][] board = Board.getBoard();
 			
@@ -35,7 +37,7 @@ public class Empty extends Tile {
 				}
 			}
 			
-			char num = '0';
+			int num = 0;
 			
                         // Checks how many bombs occupy the adjacent spaces
 			for (Tile tile : adjacent) {
@@ -45,14 +47,28 @@ public class Empty extends Tile {
 			
                         // Shows a blank space if no adjacent bombs but shows
                         // the number of adjacent bombs otherwise
-			if (num == '0') {
-				symbol = ' ';
+			if (num == 0 && !flagged) {
+				setIcon(loader.empty);
 				for (Tile tile : adjacent) {
 					tile.click();
 				}
-			} else {
-				symbol = num;
-			}
+			} else if (num == 1 && !flagged){
+				setIcon(loader.one);
+			} else if (num == 2 && !flagged){
+                                setIcon(loader.two);
+                        } else if (num == 3 && !flagged){
+				setIcon(loader.three);
+			} else if (num == 4 && !flagged){
+                                setIcon(loader.four);
+                        } else if (num == 5 && !flagged){
+                                setIcon(loader.five);
+                        } else if (num == 6 && !flagged){
+				setIcon(loader.six);
+			} else if (num == 7 && !flagged){
+                                setIcon(loader.seven);
+                        } else if (num == 8 && !flagged){
+                                setIcon(loader.eight);
+                        }
 		}
 	}
 }

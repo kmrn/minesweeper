@@ -1,6 +1,6 @@
 package minesweeper;
 
-import java.awt.GridLayout;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.FlowLayout;
@@ -12,9 +12,10 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 
 class DifficultyPanel extends JPanel {
-	private JLabel label;
+	private JLabel label, label1;
 	private JRadioButton beginner, intermediate, advanced;
 	private ButtonGroup select;
+        private LoadClass loader = new LoadClass();
 	private int difficultySetting;
 	
 	public DifficultyPanel() {
@@ -35,7 +36,7 @@ class DifficultyPanel extends JPanel {
 		beginner.addActionListener(handler);
 		intermediate.addActionListener(handler);
 		advanced.addActionListener(handler);
-		
+                
 		add(label);
 		add(beginner);
 		add(intermediate);
@@ -57,7 +58,7 @@ class DifficultyPanel extends JPanel {
 				difficultySetting = 1;
 			} else if (e.getSource() == advanced) {
 				difficultySetting = 2;
-			}
+                        }
 		}
 	}
 }

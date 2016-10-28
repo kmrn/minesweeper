@@ -1,15 +1,12 @@
 package minesweeper;
 
-import java.awt.Dimension;
-
 import javax.swing.JButton;
 
 public abstract class Tile extends JButton {
 	
 	// Declaration of public variables that are available to the child classes
 	public int borderNum;
-	public boolean open;
-	public char symbol;
+	public boolean open, flagged, isBomb;
 	public int x;
 	public int y;
            
@@ -17,19 +14,11 @@ public abstract class Tile extends JButton {
     // symbol 
 	Tile () {
 		open = false;
-		symbol = '-';
-		setPreferredSize(new Dimension(30, 30));
+                flagged = false;
+                isBomb = false;
 	}
 	
     // Abstract click method
 	public abstract void click();
-	
-    // Concrete method that switches the flag symbol
-	public void flag() {
-		if (symbol == 'F')
-			symbol = '-';
-		else
-			symbol = 'F';
-	}
 
 }

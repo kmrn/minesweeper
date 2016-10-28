@@ -9,30 +9,24 @@
 package minesweeper;
 
 import java.awt.FlowLayout;
-import java.util.InputMismatchException;
-import java.util.Scanner;
-
-import javax.swing.BoxLayout;
 import javax.swing.JFrame;
 
 public class MinesweeperGame extends JFrame {	
 	
-	private MainLayoutPanel mainLayout;
 	
 	public MinesweeperGame() {
 		setTitle("Minesweeper");
 		setLayout(new FlowLayout());
-		
 		add(new MainLayoutPanel());
 		
 		pack();
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setSize(930, 600);
+                setResizable(false);
 		setVisible(true);
 	} 
 	
-	
-	public static void main(String[] args) {
-		new MinesweeperGame();
-	}
+	public static void main(String[] args){
+            new MinesweeperGame();
+        }
 }

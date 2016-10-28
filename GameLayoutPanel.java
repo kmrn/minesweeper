@@ -1,7 +1,6 @@
 package minesweeper;
 
 import javax.swing.JPanel;
-import javax.swing.JLabel;
 
 class GameLayoutPanel extends JPanel {
 	
@@ -21,7 +20,6 @@ class GameLayoutPanel extends JPanel {
 		case 2:
 			board = new Board(16, 30, 99);
 			break;
-			
 		default:
 			break;
 		}

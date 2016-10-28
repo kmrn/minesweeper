@@ -1,25 +1,24 @@
 package minesweeper;
 
+import java.awt.Dimension;
 import java.awt.GridLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.InputMismatchException;
 import java.util.Random;
-import java.util.Scanner;
-
-import javax.swing.JFrame;
-//import javax.swing.JButton;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseEvent;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
 
 public class Board extends JPanel {
 	
     // Declaration of private variables
 	private static Tile[][] board;
+        private static LoadClass loader = new LoadClass();
+        private static boolean[][] bombs;
 	private static int height;
 	private static int width;
 	private static int gameState;
 	private static int numMines;
+        
 	
     // Board constructor that accepts the height, width, and amount of mines
     // as parameters
@@ -30,6 +29,20 @@ public class Board extends JPanel {
 		width = boardWidth;
 		numMines = mines;
 		gameState = 1;
+                
+                bombs = new boolean[height][width];
+                
+                while(mines > 0) {
+                    Random randX = new Random();
+                    Random randY = new Random();
+                    int x = randX.nextInt(width);
+                    int y = randX.nextInt(height);
+                    
+                    if(!bombs[y][x]){
+                        bombs[y][x] = true;
+                        mines--;
+                    }
+                }
 		
 		board = new Tile[height][width];
 		
@@ -37,138 +50,63 @@ public class Board extends JPanel {
         // Instantiates board objects
 		for (int i = 0; i < height; i++) {
 			for (int j = 0; j < width; j++) {
-				board[i][j] = new Empty();
-				board[i][j].x = j;
-				board[i][j].y = i;
-				board[i][j].addActionListener(handler);
-				add(board[i][j]);
+                                if(!bombs[i][j]){
+                                    board[i][j] = new Empty();
+                                    board[i][j].setIcon(loader.blank);
+                                    board[i][j].setPreferredSize(new Dimension(30,30));
+                                    board[i][j].x = j;
+                                    board[i][j].y = i;
+                                    board[i][j].addMouseListener(handler);
+                                    board[i][j].isBomb = false;
+                                    add(board[i][j]);
+                                } else {
+                                    board[i][j] = new Bomb();
+                                    board[i][j].setIcon(loader.blank);
+                                    board[i][j].setPreferredSize(new Dimension(30,30));
+                                    board[i][j].addMouseListener(handler);
+                                    board[i][j].isBomb = true;
+                                    add(board[i][j]);
+                                    
+                                }
+                                
 			}
 		}
-		
-        // Places mines in random positions in the board array
-		while (mines > 0) {
-			Random randX = new Random();
-			Random randY = new Random();
-			int x = randX.nextInt(width);
-			int y = randY.nextInt(height);
-			
-			if (!(board[y][x] instanceof Bomb)) {
-				board[y][x] = new Bomb();
-				mines--;
-			}
-		}
-		
-		//updateBoard(0, 0, '0');
 	}
 	
-	private class ButtonHandler implements ActionListener {
+	private class ButtonHandler implements MouseListener {
 
 		@Override
-		public void actionPerformed(ActionEvent e) {
-			// TODO Auto-generated method stub
-			if (e.getSource() instanceof Bomb) {
-				if (e.getSource() instanceof Nuclear) {
-				
-				} else if (e.getSource() instanceof Poison) {
-					
-				} else if (e.getSource() instanceof Rainbow) {
-				
-				} else if (e.getSource() instanceof Health) {
-					
-				}	
-			} else {
-				
-			}
-		}
+		public void mouseClicked(MouseEvent e) {}
+                public void mousePressed(MouseEvent e) {
+                    for(int i = 0; i < height; i++){
+                        for(int j = 0; j < width; j++){
+                            if(!(board[i][j] instanceof Bomb) && board[i][j] == e.getSource() && board[i][j].getIcon() == loader.blank && e.getButton() == MouseEvent.BUTTON1){
+                                board[i][j].click();
+                                checkWin();
+                            }
+                            
+                            if((board[i][j] instanceof Bomb) && board[i][j] == e.getSource() && board[i][j].getIcon() == loader.blank && e.getButton() == MouseEvent.BUTTON1){
+                                gameState = 0;
+                                showAllBombs();
+                            }
+                            
+                            if(e.getButton() == MouseEvent.BUTTON3 && board[i][j] == e.getSource() && board[i][j].getIcon() == loader.blank){
+                                board[i][j].setIcon(loader.flagIcon);
+                                board[i][j].flagged = true;
+                            } else if(e.getButton() == MouseEvent.BUTTON3 && board[i][j] == e.getSource() && board[i][j].getIcon() == loader.flagIcon){
+                                board[i][j].setIcon(loader.blank);
+                                board[i][j].flagged = false;
+                            }
+                                
+                        }
+                    }
+                    
+                    
+                }
+                public void mouseReleased(MouseEvent e) {}
+                public void mouseEntered(MouseEvent e) {}
+                public void mouseExited(MouseEvent e) {}
 		
-	}
-	
-    // Method that updates the board and prints it out
-	public static void updateBoard(int x, int y, char flag) {
-        
-		// User inputs number >= 1 and arrays first values are 0
-		x--;
-		y--;
-		
-        // Applies user input after the first time
-		if (x >= 0 && x < width && y >= 0 && y < height) {
-			if (flag == 'f' || flag == 'F') {
-				if (board[y][x].symbol == 'F') {
-					board[y][x].flag();
-				} else if (board[y][x].symbol != '-') {
-					System.out.println("You can only flag uncovered tiles!");		
-				} else {
-					board[y][x].flag();
-				}
-			} else {
-				if (board[y][x].symbol == 'F') {
-					System.out.println("Unflag a square before clicking it! (flag it again to unflag it)");
-				} else {
-					board[y][x].click();
-					if (board[y][x] instanceof Bomb)
-						gameState = 0;
-				}
-			}
-		}
-		
-		// Checks if the user has won
-		if (gameState == 1)
-			checkWin();
-		
-        // Shows all the bombs if user clicked a bomb and they lose
-		if (gameState == 0) {
-			showAllBombs();
-			System.out.println(
-                        " _______  _______  __   __  _______    _______  __   __  _______  ______    __  \n" +
-                        "|       ||   _   ||  |_|  ||       |  |       ||  | |  ||       ||    _ |  |  | \n" +
-                        "|    ___||  |_|  ||       ||    ___|  |   _   ||  |_|  ||    ___||   | ||  |  | \n" +
-                        "|   | __ |       ||       ||   |___   |  | |  ||       ||   |___ |   |_||_ |  | \n" +
-                        "|   ||  ||       ||       ||    ___|  |  |_|  ||       ||    ___||    __  ||__| \n" +
-                        "|   |_| ||   _   || ||_|| ||   |___   |       | |     | |   |___ |   |  | | __  \n" +
-                        "|_______||__| |__||_|   |_||_______|  |_______|  |___|  |_______||___|  |_||__| ");
-		}
-		
-		
-		// Prints top row of coordinates
-		System.out.print("\n\t");
-		for (int i = 1; i <= width; i++) {
-			if (i < 10)
-				System.out.print(" " + i + " ");
-			else
-				System.out.print(i + " ");
-		}
-		
-		System.out.print("\n");
-		
-        // Prints the vertical row of coordinates and prints the board
-		for (int i = 1; i <= height; i++) {
-			System.out.print(" " + i + "\t");
-			for (int j = 1; j <= width; j++) {
-				System.out.print("|" + board[i-1][j-1].symbol + "|");
-			}
-			System.out.print("\n");
-		}
-		
-        // Calls method to get user input
-		if (gameState == 1)
-			getInput();
-		
-        // Exits the game if user has won or lost
-		if (gameState == 0 || gameState == 2)
-			System.exit(0);
-	}
-	
-    // Method that gets the users input
-	public static void getInput() {
-		Scanner scan = new Scanner(System.in);
-		try{
-			System.out.print("\nInput > ");
-			updateBoard(scan.nextInt(), scan.nextInt(), scan.next().charAt(0));
-			scan.close();
-		} catch (InputMismatchException e){
-			System.out.println("Invalid Input");
-			getInput();
-		}
 	}
 	
     // Accessor methods used by the Empty class
@@ -178,22 +116,27 @@ public class Board extends JPanel {
 	
 	// Method that either reveals all bombs or flags all bombs depending on
 	// whether the user won or lost
-	public static void showAllBombs() {
+	public void showAllBombs() {
 		for (int i = 0; i < width; i++) {
 			for (int j = 0; j < height; j++) {
 				if (board[j][i] instanceof Bomb) {
 					if (gameState == 0)
-						board[j][i].click();
+						board[j][i].setIcon(loader.nuclear);
 					if (gameState == 2)
-						board[j][i].symbol = 'F';
+						board[j][i].setIcon(loader.flagIcon);
 				}
 			}
 		}
+                if(gameState == 0){
+                    loader.playMusic();
+                    JOptionPane.showMessageDialog(this, "YOU LOSE!!!!");
+                    System.exit(0);
+                }
 	}
 	
 	// Checks if user has won by checking if every tile other than a bomb
     // has been uncovered
-	public static void checkWin() {
+	public void checkWin() {
 		int emptyTiles = 0;
 		for (int i = 0; i < width; i++) {
 			for (int j = 0; j < height; j++) {
@@ -202,18 +145,11 @@ public class Board extends JPanel {
 				}
 			}
 		}
-		
 		if (emptyTiles == ((height*width) - numMines)) {
 			gameState = 2;
 			showAllBombs();
-                        System.out.println(
-                        " __   __  _______  __   __    _     _  ___   __    _  __  \n" +
-                        "|  | |  ||       ||  | |  |  | | _ | ||   | |  |  | ||  | \n" +
-                        "|  |_|  ||   _   ||  | |  |  | || || ||   | |   |_| ||  | \n" +
-                        "|       ||  | |  ||  |_|  |  |       ||   | |       ||  | \n" +
-                        "|_     _||  |_|  ||       |  |       ||   | |  _    ||__| \n" +
-                        "  |   |  |       ||       |  |   _   ||   | | | |   | __  \n" +
-                        "  |___|  |_______||_______|  |__| |__||___| |_|  |__||__| ");
+                        JOptionPane.showMessageDialog(this, "YOU WIN!!!");
+                        System.exit(0);
 		}
 	}
 }

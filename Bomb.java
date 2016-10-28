@@ -9,8 +9,6 @@ public class Bomb extends Tile {
 	
         // Click method that overrides parents method
 	public void click() {
-		open = true;
-		symbol = 'X';
-		
+            
 	}
 }
